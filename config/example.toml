@@ -1,0 +1,17 @@
+[server]
+
+[server.http]
+port = 8081
+
+[database]
+
+[database.postgres]
+host = "127.0.0.1"
+port = 5432
+username = "car-enrichment-admin"
+password = "car-enrichment-admin-password"
+database = "car-enrichment"
+ssl_mode = "disable"
+
+[api]
+url = "http://127.0.0.1:9999/info"

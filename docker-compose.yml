@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+    postgres:
+        image: postgres:latest
+        environment:
+            POSTGRES_USER: ${PG_USERNAME}
+            POSTGRES_PASSWORD: ${PG_PASSWORD}
+            POSTGRES_DB: ${PG_DATABASE}
+        ports:
+            - "5432:5432"
+        restart: always
+
+    migrate:
+        image: migrate/migrate:latest
+        depends_on:
+            - postgres
+        volumes:
+            - ./migration:/migration
+        command: -verbose -path ./migration -database postgres://${PG_USERNAME}:${PG_PASSWORD}@postgres:5432/${PG_DATABASE}?sslmode=disable up 2
+        restart: on-failure

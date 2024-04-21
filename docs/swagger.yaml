@@ -1,0 +1,237 @@
+basePath: /api/v1
+definitions:
+  github_com_jackvonhouse_car-enrichment_internal_dto.Car:
+    properties:
+      id:
+        type: integer
+      mark:
+        type: string
+      model:
+        type: string
+      owner:
+        $ref: '#/definitions/github_com_jackvonhouse_car-enrichment_internal_dto.Owner'
+      regNum:
+        type: string
+      year:
+        type: integer
+    type: object
+  github_com_jackvonhouse_car-enrichment_internal_dto.CreateCar:
+    properties:
+      reg_numbers:
+        items:
+          type: string
+        type: array
+    type: object
+  github_com_jackvonhouse_car-enrichment_internal_dto.Owner:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      patronymic:
+        type: string
+      surname:
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact: {}
+  description: Простейшее API для каталога автомобилей
+  title: Каталог автомобилей
+  version: "1.0"
+paths:
+  /car:
+    get:
+      consumes:
+      - application/json
+      description: Получение автомобилей с возможностью фильтрации
+      parameters:
+      - description: Лимит
+        in: query
+        name: limit
+        type: integer
+      - description: Смещение
+        in: query
+        name: offset
+        type: integer
+      - description: Гос. номер
+        in: query
+        name: regNum
+        type: string
+      - description: Марка
+        in: query
+        name: mark
+        type: string
+      - description: Модель
+        in: query
+        name: model
+        type: string
+      - description: Год
+        in: query
+        name: year
+        type: integer
+      - description: Имя владельца
+        in: query
+        name: ownerName
+        type: string
+      - description: Фамилия владельца
+        in: query
+        name: ownerSurname
+        type: string
+      - description: Отчество владельца
+        in: query
+        name: ownerPatronymic
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_jackvonhouse_car-enrichment_internal_dto.Car'
+            type: array
+        "404":
+          description: Автомобили отсутствуют
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "500":
+          description: Неизвестная ошибка
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Получить автомобилей
+      tags:
+      - Автомобиль
+    post:
+      consumes:
+      - application/json
+      description: Создание и обогощение автомобиля
+      parameters:
+      - description: Массив гос. номеров
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jackvonhouse_car-enrichment_internal_dto.CreateCar'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              result:
+                type: boolean
+            type: object
+        "409":
+          description: Автомобиль или владелец уже существует
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "500":
+          description: Неизвестная ошибка
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Создание автомобиля
+      tags:
+      - Автомобиль
+  /car/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаление автомобиля
+      parameters:
+      - description: Идентификатор автомобиля
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              result:
+                type: boolean
+            type: object
+        "404":
+          description: Автомобиль не найден
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "500":
+          description: Неизвестная ошибка
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Удалить автомобиль
+      tags:
+      - Автомобиль
+    put:
+      consumes:
+      - application/json
+      description: Обновление автомобиля
+      parameters:
+      - description: Данные об автомобиле
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jackvonhouse_car-enrichment_internal_dto.Car'
+      - description: Идентификатор автомобиля
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              result:
+                type: boolean
+            type: object
+        "404":
+          description: Автомобиль или владелец не найдены
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "409":
+          description: Автомобиль уже существует
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "500":
+          description: Неизвестная ошибка
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Обновить автомобиль
+      tags:
+      - Автомобиль
+swagger: "2.0"
